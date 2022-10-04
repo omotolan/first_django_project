@@ -1,7 +1,16 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
 # Create your models here.
+
+
+class User(AbstractUser):
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
 
 class Book(models.Model):
     GENRE_CHOICES = (
@@ -20,6 +29,9 @@ class Book(models.Model):
     genre = models.CharField(max_length=20, choices=GENRE_CHOICES)
     publisher = models.ForeignKey('Publisher', on_delete=models.CASCADE, related_name='Books')
 
+    def __str__(self):
+        return self.title
+
 
 class Publisher(models.Model):
     name = models.CharField(max_length=255)
@@ -34,6 +46,9 @@ class Author(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField()
     books = models.ManyToManyField(Book, related_name='authors', through='BookAuthor')
+
+    def __str__(self):
+        return self.name
 
 
 class BookAuthor(models.Model):
